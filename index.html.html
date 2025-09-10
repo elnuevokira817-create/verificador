@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verificador SAT — Responsive (Maqueta no oficial)</title>
+  <meta name="description" content="Maqueta no oficial estilo SAT, responsive (móvil y desktop) con switch Sol/Luna.">
+  <style>
+    /* ===== Paleta clara (sol) — barra vino, fondo blanco ===== */
+    :root[data-theme="light"]{
+      --bg: #ffffff;
+      --bg-muted: #f7f7f7;
+      --card: #ffffff;
+      --text: #17202a;
+      --muted: #5b6773;
+      --success: #1a9b4b;
+      --divider: #e5e7eb;
+      --btn: #198754;
+      --btn-ink: #ffffff;
+      --topbar: #6d0027;   /* vino */
+      --topbar-ink: #ffffff;
+      --chip-bg: #eefbf2;
+      --chip-bd: #c7f0d4;
+      --shadow: 0 6px 22px rgba(0,0,0,.08);
+    }
+    /* ===== Paleta oscura (luna) — gris grafito ===== */
+    :root[data-theme="dark"]{
+      --bg: #2b2b2b;
+      --bg-muted: #232323;
+      --card: #333333;
+      --text: #f3f4f6;
+      --muted: #cbd5e1;
+      --success: #22c55e;
+      --divider: #3c3c3c;
+      --btn: #16a34a;
+      --btn-ink: #071a0f;
+      --topbar: #181818;
+      --topbar-ink: #f3f4f6;
+      --chip-bg: #0f2a1a;
+      --chip-bd: #1e6b42;
+      --shadow: 0 12px 28px rgba(0,0,0,.35);
+    }
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--bg), var(--bg-muted));
+    }
+
+    /* ===== Layout responsive ===== */
+    .app{ max-width: 1040px; margin: 0 auto; }
+    .topbar{
+      position: sticky; top:0; z-index:10;
+      background: var(--topbar); color: var(--topbar-ink);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .tb-inner{
+      padding: 10px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .brand .logo{
+      width:30px; height:30px; border-radius:6px; background: rgba(255,255,255,.15);
+      display:grid; place-items:center; font-weight:800; color:#fff; font-size: 12px;
+    }
+    .brand .txt{ font-weight:700; font-size: 16px; }
+
+    /* Switch Sol/Luna */
+    .switch{ width:64px; height:28px; border-radius:999px; position:relative; display:flex; align-items:center; padding:3px; gap:6px; cursor:pointer;
+      background: rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.25);
+    }
+    .switch .icon{ width:20px; height:20px; display:grid; place-items:center; color:#fff; font-size:14px; }
+    .switch .sun::before{ content:"☀️" }
+    .switch .moon::before{ content:"🌙" }
+    .knob{ position:absolute; top:3px; left:3px; width:22px; height:22px; background:#fff; border-radius:999px; box-shadow:0 2px 8px rgba(0,0,0,.25); transition:left .25s ease; }
+    :root[data-theme="light"] .knob{ left:39px; }
+
+    /* ===== Contenido ===== */
+    .screen{ padding: 18px; }
+    .grid-outer{
+      display:grid; grid-template-columns: 1fr; gap:18px;
+    }
+    @media (min-width: 860px){
+      .grid-outer{ grid-template-columns: 1fr 1fr; }
+    }
+    .card{ background: var(--card); border:1px solid var(--divider); border-radius: 16px; box-shadow: var(--shadow); overflow:hidden; }
+    .pad{ padding: 18px; }
+    .success{ display:flex; align-items:center; gap:12px; background: var(--chip-bg); border:1px solid var(--chip-bd); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; }
+    .success i{ width:22px; height:22px; display:grid; place-items:center; border-radius:50%; background: var(--success); color:#fff; font-weight:900; font-size:14px; }
+    .title{ font-size: 20px; font-weight:800; margin:2px 0 6px; }
+    .subtitle{ color: var(--muted); font-size: 13px; margin:0 0 8px; }
+
+    .section{ margin-top: 12px; }
+    .section-title{ color: var(--muted); font-size: 12px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; margin:0 0 8px; }
+    .grid{ display:grid; grid-template-columns: 1fr; gap:10px; }
+    @media (min-width: 600px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    .field{ background: linear-gradient(180deg, rgba(148,163,184,.06), transparent); border:1px solid var(--divider); border-radius:12px; padding: 10px 12px; }
+    .field small{ display:block; font-size:11px; color: var(--muted); margin-bottom: 2px; }
+    .value{ font-size:14px; font-weight:650; word-break: break-word; }
+
+    .actions{ display:flex; gap:10px; margin-top: 12px; }
+    .btn{ flex:1; background: var(--btn); color: var(--btn-ink); border:0; border-radius: 10px; padding: 10px 12px; font-weight:700; }
+
+    .meta{ padding: 12px 18px; border-top:1px solid var(--divider); font-size: 12px; color: var(--muted); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+    .footer{ padding: 10px 18px; font-size: 12px; color: var(--muted); text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="tb-inner">
+        <div class="brand">
+          <div class="logo">SAT</div>
+          <div class="txt">Verificador</div>
+        </div>
+        <div class="switch" id="themeSwitch" role="button" aria-pressed="false" aria-label="Cambiar tema">
+          <div class="icon sun"></div>
+          <div class="icon moon"></div>
+          <div class="knob" id="knob"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="screen">
+      <div class="grid-outer">
+        <!-- Panel principal -->
+        <section class="card" aria-labelledby="t1">
+          <div class="pad">
+            <div class="success"><i>✓</i><div><div class="title" id="t1">Documento verificado correctamente</div><div class="subtitle">No se detectaron alteraciones.</div></div></div>
+
+            <div class="section">
+              <div class="section-title">Documento</div>
+              <div class="grid">
+                <div class="field"><small>Tipo</small><div class="value">Carta de Naturalización — Nacionalidad Mexicana</div></div>
+                <div class="field"><small>Estatus</small><div class="value">Vigente</div></div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">Datos de la persona</div>
+              <div class="grid">
+                <div class="field"><small>Nombre(s)</small><div class="value">SANTIAGO</div></div>
+                <div class="field"><small>Apellidos</small><div class="value">QUINTERO GARCIA</div></div>
+                <div class="field"><small>Sexo</small><div class="value">HOMBRE</div></div>
+                <div class="field"><small>Fecha de nacimiento</small><div class="value">13/07/1993</div></div>
+                <div class="field"><small>Lugar de nacimiento</small><div class="value">COLOMBIA</div></div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">Filiación</div>
+              <div class="grid">
+                <div class="field"><small>Padre</small><div class="value">FABIO QUINTERO CARDONA — COLOMBIANO</div></div>
+                <div class="field"><small>Madre</small><div class="value">LYDA PATRICIA GARCIA GOMEZ — COLOMBIANA</div></div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">Datos de registro</div>
+              <div class="grid">
+                <div class="field"><small>Entidad</small><div class="value">CIUDAD DE MEXICO</div></div>
+                <div class="field"><small>Municipio/Alcaldía</small><div class="value">MIGUEL HIDALGO</div></div>
+                <div class="field"><small>Oficialía</small><div class="value">0094</div></div>
+                <div class="field"><small>Fecha de registro</small><div class="value">23/08/1993</div></div>
+                <div class="field"><small>Libro</small><div class="value">0</div></div>
+                <div class="field"><small>Número de acta</small><div class="value">426</div></div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-title">Verificación</div>
+              <div class="grid">
+                <div class="field"><small>Código de verificación</small><div class="value" id="codigo">8560030127688400554450</div></div>
+                <div class="field"><small>Última verificación</small><div class="value" id="lastCheck">2025-09-10 12:55:00</div></div>
+              </div>
+              <div class="actions">
+                <button class="btn" id="copyCode">Copiar código</button>
+              </div>
+            </div>
+          </div>
+          <div class="meta">
+            <div>Hash: <code>c0f1a7b2e4d96a31e0c5d9a7b3f2a1c8</code></div>
+            <div>Verificación Oficial</div>
+          </div>
+        </section>
+  <ul style="margin:0 0 8px 18px; font-size:14px; line-height:1.5; color:var(--muted);">
+              <li>Información activa del residente.</li>
+              <li>Uso exclusivo para fines oficiales.  
+  La información contenida en este documento es confidencial y no debe ser compartida ni distribuida sin autorización expresa.</li>
+              <li>Campos clave del documento y del registro.</li>
+            </ul>
+          </div>
+        </aside>
+     <div class="alert-oficial">
+  🔒 Verificación oficial de documento activo
+</div>
+  </div>
+
+  <script>
+    // Switch Sol/Luna con persistencia
+    const sw = document.getElementById('themeSwitch');
+    const html = document.documentElement;
+    const STORAGE_KEY = 'sat-mock-theme-responsive';
+    function setTheme(next){
+      html.setAttribute('data-theme', next);
+      sw?.setAttribute('aria-pressed', next === 'light');
+      localStorage.setItem(STORAGE_KEY, next);
+    }
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved){ setTheme(saved); }
+    else{
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      setTheme(prefersLight ? 'light' : 'dark');
+    }
+    sw?.addEventListener('click', ()=>{
+      const current = html.getAttribute('data-theme') || 'dark';
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // Copiar código
+    const btn = document.getElementById('copyCode');
+    btn?.addEventListener('click', async () => {
+      try{
+        const text = document.getElementById('codigo').textContent.trim();
+        await navigator.clipboard.writeText(text);
+        btn.textContent = 'Copiado ✓';
+        setTimeout(()=> btn.textContent = 'Copiar código', 1400);
+      }catch(e){
+        btn.textContent = 'No se pudo copiar';
+        setTimeout(()=> btn.textContent = 'Copiar código', 1400);
+      }
+    });
+  </script>
+</body>
+</html>
